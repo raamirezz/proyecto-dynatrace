@@ -1,31 +1,46 @@
-[![Build Status](https://travis-ci.org/microservices-demo/microservices-demo.svg?branch=master)](https://travis-ci.org/microservices-demo/microservices-demo)
+# 🛍️ Shock Shop + Dynatrace Integration
 
-# DEPRECATED: Sock Shop : A Microservice Demo Application
+Este proyecto tiene como objetivo **integrar Dynatrace** en una arquitectura de microservicios ya existente llamada **Shock Shop** (basada en el conocido microservices-demo). La finalidad es demostrar cómo se puede aplicar observabilidad avanzada y monitorización automática usando **Dynatrace OneAgent**.
 
-The application is the user-facing part of an online shop that sells socks. It is intended to aid the demonstration and testing of microservice and cloud native technologies.
+---
 
-It is built using [Spring Boot](http://projects.spring.io/spring-boot/), [Go kit](http://gokit.io) and [Node.js](https://nodejs.org/) and is packaged in Docker containers.
+## 🎯 Objetivo del Proyecto
 
-You can read more about the [application design](./internal-docs/design.md).
+📌 **Incorporar Dynatrace en un entorno realista de microservicios** para:
 
-## Deployment Platforms
+- Automatizar la monitorización de infraestructura, contenedores y procesos.
+- Detectar servicios sin configuración manual.
+- Crear dashboards interactivos usando DQL (Dynatrace Query Language).
+- Observar el comportamiento de componentes como MongoDB, Node.js, Java, RabbitMQ, etc.
 
-The [deploy folder](./deploy/) contains scripts and instructions to provision the application onto your favourite platform. 
+---
 
-Please let us know if there is a platform that you would like to see supported.
+## 🧱 Stack Tecnológico
 
-## Bugs, Feature Requests and Contributing
+Shock Shop es un entorno compuesto por:
 
-We'd love to see community contributions. We like to keep it simple and use Github issues to track bugs and feature requests and pull requests to manage contributions. See the [contribution information](.github/CONTRIBUTING.md) for more information.
+- **Node.js** (Front-end)
+- **Java** (Carts, Orders, Shipping)
+- **Go** (Catalogue, Payment)
+- **MongoDB / MySQL / RabbitMQ** (Backends de persistencia y cola)
+- **Nginx (edge-router)** como gateway
 
-## Screenshot
+Todos los servicios están definidos y orquestados con **Docker Compose**.
 
-![Sock Shop frontend](https://github.com/microservices-demo/microservices-demo.github.io/raw/master/assets/sockshop-frontend.png)
+---
 
-## Visualizing the application
+## 🚀 Cómo desplegar el entorno
 
-Use [Weave Scope](http://weave.works/products/weave-scope/) or [Weave Cloud](http://cloud.weave.works/) to visualize the application once it's running in the selected [target platform](./deploy/).
+```bash
+git clone https://github.com/weaveworks/microservices-demo
+cd deploy/docker-compose
 
-![Sock Shop in Weave Scope](https://github.com/microservices-demo/microservices-demo.github.io/raw/master/assets/sockshop-scope.png)
+# Exporta las variables para Dynatrace
+export DT_API_URL=https://<entorno>.live.dynatrace.com
+export DT_API_TOKEN=dt0c01.abc123...
 
-## 
+# Levanta el entorno con el agente incluido
+docker-compose up -d
+
+## Capturas
+En la carpeta "Capturas" se han añadido imágenes con dashboards que justifican la incorporación de Dynatrace al proyecto
