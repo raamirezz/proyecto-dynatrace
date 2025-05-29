@@ -8,11 +8,12 @@ services:
     cap_drop:
       - all
     read_only: true
+    # 🔥 Se elimina el mapeo de puertos (no exponer 8080 directamente)
+
   edge-router:
     image: weaveworksdemos/edge-router:0.1.1
     ports:
-      - '80:80'
-      - '8080:8080'
+      - '80:80'  # ✅ Solo este
     cap_drop:
       - all
     cap_add:
@@ -26,6 +27,7 @@ services:
       - /var/run:rw,noexec,nosuid
     hostname: edge-router
     restart: always
+
   catalogue:
     image: weaveworksdemos/catalogue:0.3.5
     hostname: catalogue
@@ -35,6 +37,7 @@ services:
     cap_add:
       - NET_BIND_SERVICE
     read_only: true
+
   catalogue-db:
     image: weaveworksdemos/catalogue-db:0.3.0
     hostname: catalogue-db
@@ -43,6 +46,7 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
       - MYSQL_DATABASE=socksdb
+
   carts:
     image: weaveworksdemos/carts:0.4.8
     hostname: carts
@@ -56,6 +60,7 @@ services:
       - /tmp:rw,noexec,nosuid
     environment:
       - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
+
   carts-db:
     image: mongo:3.4
     hostname: carts-db
@@ -69,6 +74,7 @@ services:
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid
+
   orders:
     image: weaveworksdemos/orders:0.4.7
     hostname: orders
@@ -82,6 +88,7 @@ services:
       - /tmp:rw,noexec,nosuid
     environment:
       - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
+
   orders-db:
     image: mongo:3.4
     hostname: orders-db
@@ -95,6 +102,7 @@ services:
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid
+
   shipping:
     image: weaveworksdemos/shipping:0.4.8
     hostname: shipping
@@ -108,6 +116,7 @@ services:
       - /tmp:rw,noexec,nosuid
     environment:
       - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
+
   queue-master:
     image: weaveworksdemos/queue-master:0.3.1
     hostname: queue-master
@@ -121,6 +130,7 @@ services:
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid
+
   rabbitmq:
     image: rabbitmq:3.6.8
     hostname: rabbitmq
@@ -133,6 +143,7 @@ services:
       - SETUID
       - DAC_OVERRIDE
     read_only: true
+
   payment:
     image: weaveworksdemos/payment:0.4.3
     hostname: payment
@@ -142,6 +153,7 @@ services:
     cap_add:
       - NET_BIND_SERVICE
     read_only: true
+
   user:
     image: weaveworksdemos/user:0.4.4
     hostname: user
@@ -153,6 +165,7 @@ services:
     read_only: true
     environment:
       - MONGO_HOST=user-db:27017
+
   user-db:
     image: weaveworksdemos/user-db:0.4.0
     hostname: user-db
@@ -166,6 +179,7 @@ services:
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid
+
   user-sim:
     image: weaveworksdemos/load-test:0.1.1
     cap_drop:
@@ -173,3 +187,15 @@ services:
     read_only: true
     hostname: user-simulator
     command: "-d 60 -r 200 -c 2 -h edge-router"
+
+  dynatrace-oneagent:
+    image: dynatrace/oneagent
+    privileged: true
+    pid: "host"
+    network_mode: "host"
+    environment:
+      - ONEAGENT_INSTALLER_SCRIPT_URL=${DT_API_URL}/api/v1/deployment/installer/agent/unix/default/latest
+      - ONEAGENT_INSTALLER_DOWNLOAD_TOKEN=${DT_API_TOKEN}
+    volumes:
+      - /:/mnt/root
+    restart: unless-stopped
