@@ -42,5 +42,6 @@ export DT_API_TOKEN=dt0c01.abc123...
 # Levanta el entorno con el agente incluido
 docker-compose up -d
 
+
 ## Capturas
 En la carpeta "Capturas" se han añadido imágenes con dashboards que justifican la incorporación de Dynatrace al proyecto
